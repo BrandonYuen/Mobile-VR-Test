@@ -30,12 +30,18 @@ public class PlayerController : MonoBehaviour {
     }
 
     void playerMovement() {
+        // [Joystick] / [A] [W] [D] [S]
         float horizontal = Input.GetAxis("Horizontal");
         float vertical = Input.GetAxis("Vertical");
         Vector3 direction = new Vector3(horizontal, 0, vertical);
-        Vector3 velocity = direction * speed;
-        velocity = Camera.main.transform.TransformDirection(velocity);
-        velocity.y -= gravity;
-        controller.Move(velocity * Time.deltaTime);
+        direction *= speed;
+        direction = Camera.main.transform.TransformDirection(direction);
+        direction = Vector3.ProjectOnPlane(direction, Vector3.up);
+
+        // [Up] [Down] / [Space] [Ctrl]
+        if (Input.GetButton("Up")) direction.y += speed;
+        if (Input.GetButton("Down")) direction.y -= speed;
+
+        controller.Move(direction * Time.deltaTime);
     }
 }
